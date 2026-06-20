@@ -1,12 +1,12 @@
 [project]
 name = "waymirror"
 dynamic = ["version"]
-description = "Mirror a region of a Wayland screen into a normal window (share it as a window, not a blurred camera)."
+description = "Mirror a region of a Wayland screen into a normal window."
 readme = "README.md"
 requires-python = ">=3.11"
 license = "MIT"
 license-files = ["LICENSE"]
-authors = [{ name = "Senko Rasic", email = "senko@dobarkod.hr" }]
+authors = [{ name = "Senko Rasic", email = "senko@senko.net" }]
 keywords = [
     "wayland", "screen", "mirror", "screencast", "screen-sharing",
     "pipewire", "gstreamer", "gtk4", "xdg-desktop-portal", "gnome",
