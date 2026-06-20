@@ -1,0 +1,11 @@
+[Desktop Entry]
+Type=Application
+Name=waymirror
+GenericName=Screen Region Mirror
+Comment=Mirror a region of a Wayland screen into a window
+Exec=@EXEC@
+Icon=hr.dobarkod.waymirror
+Terminal=false
+Categories=Utility;
+Keywords=screen;mirror;screencast;region;wayland;share;
+StartupWMClass=hr.dobarkod.waymirror

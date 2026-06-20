@@ -1,0 +1,26 @@
+name: tests
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.11", "3.12", "3.13"]
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      # The unit tests only exercise the pure-logic module (waymirror.geometry),
+      # which has no GTK/GStreamer/portal imports -- so no system packages and
+      # no display are needed here.
+      - name: Run tests
+        run: uv run python -m unittest discover -s tests -v

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="128" height="128">
+  <defs>
+    <linearGradient id="screen" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#334155"/>
+      <stop offset="1" stop-color="#1e293b"/>
+    </linearGradient>
+    <linearGradient id="win" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#1e293b"/>
+      <stop offset="1" stop-color="#0f172a"/>
+    </linearGradient>
+  </defs>
+
+  <!-- source screen -->
+  <rect x="12" y="18" width="76" height="58" rx="8" fill="url(#screen)"/>
+  <!-- selected region on the source -->
+  <rect x="40" y="32" width="38" height="30" rx="4"
+        fill="#22c55e" fill-opacity="0.15"
+        stroke="#22c55e" stroke-width="3.5"/>
+
+  <!-- output window (the mirror) -->
+  <rect x="50" y="50" width="64" height="58" rx="9" fill="url(#win)"
+        stroke="#22c55e" stroke-width="3"/>
+  <circle cx="61" cy="60" r="2.6" fill="#64748b"/>
+  <circle cx="70" cy="60" r="2.6" fill="#64748b"/>
+  <!-- mirrored region content -->
+  <rect x="60" y="70" width="44" height="30" rx="4" fill="#22c55e" fill-opacity="0.85"/>
+</svg>
