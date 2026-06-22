@@ -7,4 +7,4 @@ it to the region you ask for, and shows it in an ordinary GTK4 window -- which a
 meeting app can then share as a *window* (sharp), not as a blurred camera feed.
 """
 
-__version__ = "0.1.0"
+__version__ = "0.2.0"
