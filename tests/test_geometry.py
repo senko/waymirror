@@ -3,6 +3,7 @@ import unittest
 from waymirror.geometry import (
     compute_crop,
     fit_within_bounds,
+    normalize_rect,
     parse_geometry,
     resolve_half,
 )
@@ -111,6 +112,44 @@ class FitWithinBoundsTests(unittest.TestCase):
     def test_ratio_preserved(self):
         w, h = fit_within_bounds(2560, 1440, 5120, 1408)
         self.assertAlmostEqual(w / h, 2560 / 1440, places=2)
+
+
+class NormalizeRectTests(unittest.TestCase):
+    def test_basic(self):
+        self.assertEqual(normalize_rect(100, 100, 300, 250), (200, 150, 100, 100))
+
+    def test_direction_independent(self):
+        forward = normalize_rect(100, 100, 300, 250)
+        for x0, y0, x1, y1 in [
+            (300, 250, 100, 100),  # bottom-right -> top-left
+            (300, 100, 100, 250),  # top-right -> bottom-left
+            (100, 250, 300, 100),  # bottom-left -> top-right
+        ]:
+            self.assertEqual(normalize_rect(x0, y0, x1, y1), forward)
+
+    def test_origin_makes_coords_global(self):
+        # same local drag, monitor at logical (1920, 0)
+        self.assertEqual(
+            normalize_rect(100, 100, 300, 250, origin=(1920, 0)),
+            (200, 150, 2020, 100),
+        )
+
+    def test_clamped_to_bounds(self):
+        # drag spills past the right/bottom edges and into negatives
+        self.assertEqual(
+            normalize_rect(-10, -10, 5000, 5000, bounds=(2560, 1440)),
+            (2560, 1440, 0, 0),
+        )
+
+    def test_click_is_zero_sized(self):
+        self.assertEqual(normalize_rect(42, 42, 42, 42), (0, 0, 42, 42))
+
+    def test_rounds_floats(self):
+        # gesture coordinates arrive as floats; corners round independently
+        # left=100 top=101 right=301 bottom=250 -> w=201 h=149 at (100, 101)
+        self.assertEqual(
+            normalize_rect(100.4, 100.6, 300.6, 250.4), (201, 149, 100, 101)
+        )
 
 
 if __name__ == "__main__":

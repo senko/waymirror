@@ -26,7 +26,7 @@ def build_parser():
                         optional and defaults to +0+0.
               left      the exact left half of the selected monitor
               right     the exact right half of the selected monitor
-              (omitted) mirror the whole selected monitor
+              (omitted) draw the region on screen with the interactive picker
 
             With left/right you don't need to know the screen size; waymirror
             reads it from the portal and splits the monitor in two.
@@ -35,7 +35,7 @@ def build_parser():
               waymirror 800x600+100+100     # explicit region
               waymirror left                # left half of the monitor
               waymirror right --no-cursor   # right half, hide the pointer
-              waymirror                     # whole monitor
+              waymirror                     # drag to pick a region
 
             Controls: press q or Esc to quit (the window has no title bar).
             """
@@ -43,8 +43,8 @@ def build_parser():
     )
     parser.add_argument(
         "region", nargs="?", metavar="REGION",
-        help="WxH+X+Y, 'left', 'right', or omit for the whole monitor "
-             "(see below)",
+        help="WxH+X+Y, 'left', 'right', or omit to draw a region with the "
+             "on-screen picker (see below)",
     )
     parser.add_argument(
         "--no-cursor", action="store_true",
@@ -86,6 +86,14 @@ def main(argv=None):
                 geometry = parse_geometry(args.region)
             except ValueError as e:
                 parser.error(str(e))
+    else:
+        # no region given: let the user draw one. Import lazily (GTK) after
+        # preflight, same reason as the app import below.
+        from .picker import pick_region
+
+        geometry = pick_region()
+        if geometry is None:
+            return 0  # cancelled the picker
 
     # import the GTK app only after preflight, so a missing-dependency message
     # beats a raw ImportError.

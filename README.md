@@ -65,9 +65,10 @@ sudo pacman -S \
 
 The pieces you need, whatever the package names: **PyGObject**, **GTK 4** +
 typelib, **GStreamer** core + typelibs, and the elements `pipewiresrc`,
-`videoconvert`, `videocrop`, and `gtk4paintablesink` (the last comes from the
-GStreamer **Rust** plugins / `gstreamer1.0-gtk4`). waymirror checks these at
-startup and tells you exactly what's missing.
+`videoconvert`, `videocrop`, `appsink`, and `gtk4paintablesink` (the last comes
+from the GStreamer **Rust** plugins / `gstreamer1.0-gtk4`; the rest are in the
+base/good plugins already listed above). waymirror checks these at startup and
+tells you exactly what's missing.
 
 ## Install
 
@@ -98,13 +99,18 @@ still need the native GStreamer plugins).
 ## Usage
 
 ```bash
+waymirror                     # draw the region on screen (interactive picker)
 waymirror 800x600+100+100     # explicit region (+X+Y optional, defaults to +0+0)
 waymirror left                # exact left half of the selected monitor
 waymirror right               # exact right half
-waymirror                     # whole selected monitor
 waymirror right --no-cursor   # hide the mouse pointer in the mirror
 waymirror --help
 ```
+
+Run with **no region** and waymirror freezes a snapshot of the monitor and shows
+it full-screen, so you can **drag a rectangle** over the part you want to mirror
+(Esc cancels). On the first run the portal asks which monitor to capture; after
+that the choice is remembered, so the picker comes straight up.
 
 With `left`/`right`, waymirror reads the monitor size from the portal and splits
 it in two — you don't need to know the resolution.

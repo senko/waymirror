@@ -5,6 +5,7 @@ OpenPipeWireRemote) on the GLib main loop and hands back a PipeWire fd + node.
 """
 
 import logging
+import os
 
 from gi.repository import GLib, Gio
 
@@ -19,7 +20,31 @@ PERSIST_PERSISTENT = 2
 PORTAL_BUS = "org.freedesktop.portal.Desktop"
 PORTAL_OBJ = "/org/freedesktop/portal/desktop"
 SCREENCAST_IFACE = "org.freedesktop.portal.ScreenCast"
+SESSION_IFACE = "org.freedesktop.portal.Session"
 REQUEST_IFACE = "org.freedesktop.portal.Request"
+
+
+def restore_token_path():
+    return os.path.join(GLib.get_user_config_dir(), "waymirror", "restore-token")
+
+
+def load_restore_token():
+    """The saved portal restore token (picks the same monitor again), or None."""
+    try:
+        with open(restore_token_path(), encoding="utf-8") as f:
+            return f.read().strip() or None
+    except OSError:
+        return None
+
+
+def save_restore_token(token):
+    path = restore_token_path()
+    try:
+        os.makedirs(os.path.dirname(path), exist_ok=True)
+        with open(path, "w", encoding="utf-8") as f:
+            f.write(token)
+    except OSError as e:
+        log.warning("could not save restore token: %s", e)
 
 
 class PortalScreenCast:
@@ -44,6 +69,16 @@ class PortalScreenCast:
 
     def start(self):
         self._create_session()
+
+    def close(self):
+        """Close the session (e.g. the picker's once it has grabbed a frame)."""
+        if not self.session_handle:
+            return
+        self.bus.call(
+            PORTAL_BUS, self.session_handle, SESSION_IFACE, "Close", None,
+            None, Gio.DBusCallFlags.NONE, -1, None, None,
+        )
+        self.session_handle = None
 
     # -- helpers ----------------------------------------------------------
     def _next_token(self):

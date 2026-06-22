@@ -5,6 +5,7 @@ REQUIRED_ELEMENTS = {
     "pipewiresrc": "gstreamer1.0-pipewire",
     "videoconvert": "gstreamer1.0-plugins-base",
     "videocrop": "gstreamer1.0-plugins-good",
+    "appsink": "gstreamer1.0-plugins-base",  # region picker grabs one frame
     "gtk4paintablesink": "gstreamer1.0-gtk4",
 }
 

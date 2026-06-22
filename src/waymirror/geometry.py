@@ -44,6 +44,33 @@ def resolve_half(side, monitor_rect):
     raise ValueError(f"unknown side: {side!r} (expected 'left' or 'right')")
 
 
+def normalize_rect(x0, y0, x1, y1, origin=(0, 0), bounds=None):
+    """Turn two drag corners into a global region (w, h, x, y).
+
+    x0,y0 / x1,y1: the drag's start/end in monitor-local logical coordinates;
+        either drag direction works.
+    origin: the monitor's (x, y) in global logical coordinates, added so the
+        result is in the same global space as parse_geometry's output.
+    bounds: the monitor's (w, h) to clamp the rectangle within, or None for no
+        clamping.
+
+    Returns (w, h, gx, gy). w/h may be 0 for a click (caller decides what that
+    means).
+    """
+    left = round(min(x0, x1))
+    top = round(min(y0, y1))
+    right = round(max(x0, x1))
+    bottom = round(max(y0, y1))
+    if bounds is not None:
+        bw, bh = bounds
+        left = max(0, min(left, bw))
+        right = max(0, min(right, bw))
+        top = max(0, min(top, bh))
+        bottom = max(0, min(bottom, bh))
+    ox, oy = origin
+    return right - left, bottom - top, left + ox, top + oy
+
+
 def compute_crop(buffer_w, buffer_h, monitor_rect, geometry):
     """Crop (left, top, right, bottom) to extract `geometry` from a monitor buffer.
 

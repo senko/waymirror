@@ -1,7 +1,6 @@
 """GTK4 application: portal stream -> crop -> window."""
 
 import logging
-import os
 
 import gi
 
@@ -15,33 +14,13 @@ from .portal import (
     CURSOR_MODE_EMBEDDED,
     CURSOR_MODE_HIDDEN,
     PortalScreenCast,
+    load_restore_token,
+    save_restore_token,
 )
 
 log = logging.getLogger(__name__)
 
 APP_ID = "hr.dobarkod.waymirror"
-
-
-def _restore_token_path():
-    return os.path.join(GLib.get_user_config_dir(), "waymirror", "restore-token")
-
-
-def _load_restore_token():
-    try:
-        with open(_restore_token_path(), encoding="utf-8") as f:
-            return f.read().strip() or None
-    except OSError:
-        return None
-
-
-def _save_restore_token(token):
-    path = _restore_token_path()
-    try:
-        os.makedirs(os.path.dirname(path), exist_ok=True)
-        with open(path, "w", encoding="utf-8") as f:
-            f.write(token)
-    except OSError as e:
-        log.warning("could not save restore token: %s", e)
 
 
 class WayMirrorApp(Gtk.Application):
@@ -97,7 +76,7 @@ class WayMirrorApp(Gtk.Application):
         cursor_mode = CURSOR_MODE_EMBEDDED if self.show_cursor else CURSOR_MODE_HIDDEN
         self.portal = PortalScreenCast(
             bus, cursor_mode, self._on_stream_ready, self._on_portal_error,
-            restore_token=_load_restore_token(), save_token=_save_restore_token,
+            restore_token=load_restore_token(), save_token=save_restore_token,
         )
         self.portal.start()
 
